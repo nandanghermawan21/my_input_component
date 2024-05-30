@@ -32,6 +32,8 @@ class InputComponent<T> extends StatefulWidget {
   final Color? cursorColor;
   final double? borderRadius;
   final String? defaultErrorText;
+  final bool isIncludeTime;
+  final DatePickerMode datePickerMode;
 
   const InputComponent({
     super.key,
@@ -61,6 +63,8 @@ class InputComponent<T> extends StatefulWidget {
     this.backgroundColor,
     this.borderRadius,
     this.defaultErrorText,
+    this.isIncludeTime = false,
+    this.datePickerMode = DatePickerMode.day,
   });
 
   @override
@@ -102,10 +106,14 @@ class InputComponentState<T> extends State<InputComponent<T>> {
           TimeOfDay timeOfDay = widget.value as TimeOfDay;
           model.text = "${timeOfDay.hour}:${timeOfDay.minute}";
         } else if (T == DateTime) {
-          debugPrint("masuk ke DateTime");
-          model.text = (widget.value as DateTime).toStrings(
-            locale: widget.locale,
-          );
+          widget.isIncludeTime
+              ? model.text = (widget.value as DateTime).toStrings(
+                  locale: widget.locale,
+                  format: Formats.dateTime,
+                )
+              : model.text = (widget.value as DateTime).toStrings(
+                  locale: widget.locale,
+                );
         } else if (T == DateTimeRange) {
           DateTimeRange date = widget.value as DateTimeRange;
           model.text = "${date.start.toStrings(
@@ -309,6 +317,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 return widget.validator?.call(double.tryParse(a) as T);
               } else if (T == String) {
                 return widget.validator?.call(v as T);
+              } else {
+                return null;
               }
             }
           : widget.isRequired
@@ -334,7 +344,9 @@ class InputComponentState<T> extends State<InputComponent<T>> {
             if (T == TimeOfDay) {
               TimeOfDay? date = await showTimePicker(
                   context: context,
-                  initialTime: TimeOfDay.now(),
+                  initialTime: widget.value == null
+                      ? TimeOfDay.now()
+                      : widget.value as TimeOfDay,
                   builder: (context, childWidget) {
                     return MediaQuery(
                       data: MediaQuery.of(context).copyWith(
@@ -347,26 +359,56 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 widget.onChanged(date as T);
               }
             } else if (T == DateTime) {
-              debugPrint("masuk ke on tap DateTime");
               final date = await showDatePicker(
                 context: context,
-                initialDatePickerMode: DatePickerMode.day,
-                initialDate: DateTime.now(),
+                initialDatePickerMode: widget.datePickerMode,
+                initialDate: widget.value == null
+                    ? DateTime.now()
+                    : widget.value as DateTime,
                 firstDate: widget.firstDate ??
                     DateTime.now().subtract(const Duration(days: 365)),
                 lastDate: widget.lastDate ??
                     DateTime.now().add(const Duration(days: 365)),
               );
               if (date != null) {
-                model.text = date.toStrings(
-                  locale: widget.locale,
-                );
-                widget.onChanged(date as T);
+                if (widget.isIncludeTime) {
+                  TimeOfDay timeOfDays = TimeOfDay.fromDateTime(date);
+                  TimeOfDay? timeOfDay = await showTimePicker(
+                      context: context,
+                      initialTime: timeOfDays,
+                      builder: (context, childWidget) {
+                        return MediaQuery(
+                          data: MediaQuery.of(context).copyWith(
+                              alwaysUse24HourFormat:
+                                  widget.alwaysUse24HourFormat),
+                          child: childWidget!,
+                        );
+                      });
+                  if (timeOfDay != null) {
+                    DateTime selectedDate = DateTime(
+                      date.year,
+                      date.month,
+                      date.day,
+                      timeOfDay.hour,
+                      timeOfDay.minute,
+                    );
+                    model.text = selectedDate.toStrings(
+                        locale: widget.locale, format: Formats.dateTime);
+                    widget.onChanged(selectedDate as T);
+                  }
+                } else {
+                  model.text = date.toStrings(
+                    locale: widget.locale,
+                  );
+                  widget.onChanged(date as T);
+                }
               }
             } else if (T == DateTimeRange) {
               final date = await showDateRangePicker(
                 context: context,
-                currentDate: DateTime.now(),
+                currentDate: widget.value == null
+                    ? DateTime.now()
+                    : widget.value as DateTime,
                 firstDate: widget.firstDate ??
                     DateTime.now().subtract(const Duration(days: 365)),
                 lastDate: widget.lastDate ??
@@ -419,7 +461,9 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                 onPressed: () async {
                                   TimeOfDay? date = await showTimePicker(
                                       context: context,
-                                      initialTime: TimeOfDay.now(),
+                                      initialTime: widget.value == null
+                                          ? TimeOfDay.now()
+                                          : widget.value as TimeOfDay,
                                       builder: (context, childWidget) {
                                         return MediaQuery(
                                           data: MediaQuery.of(context).copyWith(
@@ -439,12 +483,13 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                             : (T == DateTime)
                                 ? IconButton(
                                     onPressed: () async {
-                                      debugPrint("masuk ke on tap IconButton");
                                       final date = await showDatePicker(
                                         context: context,
                                         initialDatePickerMode:
-                                            DatePickerMode.day,
-                                        initialDate: DateTime.now(),
+                                            widget.datePickerMode,
+                                        initialDate: widget.value == null
+                                            ? DateTime.now()
+                                            : widget.value as DateTime,
                                         firstDate: widget.firstDate ??
                                             DateTime.now().subtract(
                                                 const Duration(days: 365)),
@@ -453,10 +498,44 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                                 .add(const Duration(days: 365)),
                                       );
                                       if (date != null) {
-                                        model.text = date.toStrings(
-                                          locale: widget.locale,
-                                        );
-                                        widget.onChanged(date as T);
+                                        if (widget.isIncludeTime) {
+                                          TimeOfDay timeOfDays =
+                                              TimeOfDay.fromDateTime(date);
+                                          TimeOfDay? timeOfDay =
+                                              await showTimePicker(
+                                                  context: context,
+                                                  initialTime: timeOfDays,
+                                                  builder:
+                                                      (context, childWidget) {
+                                                    return MediaQuery(
+                                                      data: MediaQuery.of(
+                                                              context)
+                                                          .copyWith(
+                                                              alwaysUse24HourFormat:
+                                                                  widget
+                                                                      .alwaysUse24HourFormat),
+                                                      child: childWidget!,
+                                                    );
+                                                  });
+                                          if (timeOfDay != null) {
+                                            DateTime selectedDate = DateTime(
+                                              date.year,
+                                              date.month,
+                                              date.day,
+                                              timeOfDay.hour,
+                                              timeOfDay.minute,
+                                            );
+                                            model.text = selectedDate.toStrings(
+                                                locale: widget.locale,
+                                                format: Formats.dateTime);
+                                            widget.onChanged(selectedDate as T);
+                                          }
+                                        } else {
+                                          model.text = date.toStrings(
+                                            locale: widget.locale,
+                                          );
+                                          widget.onChanged(date as T);
+                                        }
                                       }
                                     },
                                     icon: const Icon(Icons.calendar_today),
@@ -468,7 +547,9 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                           final date =
                                               await showDateRangePicker(
                                             context: context,
-                                            currentDate: DateTime.now(),
+                                            currentDate: widget.value == null
+                                                ? DateTime.now()
+                                                : widget.value as DateTime,
                                             firstDate: widget.firstDate ??
                                                 DateTime.now().subtract(
                                                     const Duration(days: 365)),
@@ -559,7 +640,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                           Radius.circular(widget.borderRadius ?? 5),
                         ),
                         borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.background),
+                            color: Theme.of(context).colorScheme.primary),
                       ),
               ),
     );
