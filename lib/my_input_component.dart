@@ -359,20 +359,22 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 widget.onChanged(date as T);
               }
             } else if (T == DateTime) {
+              DateTime? lastDate = widget.lastDate ??
+                  DateTime.now().add(const Duration(days: 365));
+              DateTime? initialDate = widget.value as DateTime?;
               final date = await showDatePicker(
                 context: context,
                 initialDatePickerMode: widget.datePickerMode,
-                initialDate: widget.value == null
-                    ? DateTime.now()
-                    : widget.value as DateTime,
+                initialDate: initialDate.isAfter(lastDate) ? null : initialDate,
                 firstDate: widget.firstDate ??
                     DateTime.now().subtract(const Duration(days: 365)),
-                lastDate: widget.lastDate ??
-                    DateTime.now().add(const Duration(days: 365)),
+                lastDate: lastDate,
               );
               if (date != null) {
                 if (widget.isIncludeTime) {
                   TimeOfDay timeOfDays = TimeOfDay.fromDateTime(date);
+                  await Future.delayed(Duration.zero);
+                  if (!mounted) return;
                   TimeOfDay? timeOfDay = await showTimePicker(
                       context: context,
                       initialTime: timeOfDays,
@@ -483,24 +485,30 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                             : (T == DateTime)
                                 ? IconButton(
                                     onPressed: () async {
+                                      DateTime? lastDate = widget.lastDate ??
+                                          DateTime.now()
+                                              .add(const Duration(days: 365));
+                                      DateTime? initialDate =
+                                          widget.value as DateTime?;
                                       final date = await showDatePicker(
                                         context: context,
                                         initialDatePickerMode:
                                             widget.datePickerMode,
-                                        initialDate: widget.value == null
-                                            ? DateTime.now()
-                                            : widget.value as DateTime,
+                                        initialDate:
+                                            initialDate.isAfter(lastDate)
+                                                ? null
+                                                : initialDate,
                                         firstDate: widget.firstDate ??
                                             DateTime.now().subtract(
                                                 const Duration(days: 365)),
-                                        lastDate: widget.lastDate ??
-                                            DateTime.now()
-                                                .add(const Duration(days: 365)),
+                                        lastDate: lastDate,
                                       );
                                       if (date != null) {
                                         if (widget.isIncludeTime) {
                                           TimeOfDay timeOfDays =
                                               TimeOfDay.fromDateTime(date);
+                                          await Future.delayed(Duration.zero);
+                                          if (!mounted) return;
                                           TimeOfDay? timeOfDay =
                                               await showTimePicker(
                                                   context: context,
