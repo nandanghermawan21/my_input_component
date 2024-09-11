@@ -34,6 +34,7 @@ class InputComponent<T> extends StatefulWidget {
   final String? defaultErrorText;
   final bool isIncludeTime;
   final DatePickerMode datePickerMode;
+  final bool allowNegative;
 
   const InputComponent({
     super.key,
@@ -58,6 +59,7 @@ class InputComponent<T> extends StatefulWidget {
     this.firstDate,
     this.lastDate,
     this.alwaysUse24HourFormat = true,
+    this.allowNegative = false,
     this.colorSuffixIcon,
     this.cursorColor,
     this.backgroundColor,
@@ -282,7 +284,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                     decimalSeparator: '.',
                     groupDigits: 3,
                     groupSeparator: ',',
-                    allowNegative: false,
+                    allowNegative: widget.allowNegative,
                     overrideDecimalPoint: true,
                     insertDecimalPoint: false,
                     insertDecimalDigits: true,
