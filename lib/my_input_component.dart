@@ -300,10 +300,15 @@ class InputComponentState<T> extends State<InputComponent<T>> {
         bouncer.run(() {
           if (T == int) {
             var a = value.replaceAll(',', "");
-            widget.onChanged(int.tryParse(a) as T);
+            int parsedValue = int.tryParse(a) ?? 0;
+            widget.onChanged(parsedValue as T);
           } else if (T == double) {
             var a = value.replaceAll(',', "");
-            widget.onChanged(double.tryParse(a) as T);
+            double parsedValue = double.tryParse(
+                  a,
+                ) ??
+                0.0;
+            widget.onChanged(parsedValue as T);
           } else if (T == String) {
             widget.onChanged(value as T);
           }
@@ -313,10 +318,18 @@ class InputComponentState<T> extends State<InputComponent<T>> {
           ? (v) {
               if (T == int) {
                 var a = (v ?? "").replaceAll(',', "");
-                return widget.validator?.call(int.tryParse(a) as T);
+                int parsedValue = int.tryParse(
+                      a,
+                    ) ??
+                    0;
+                return widget.validator?.call(parsedValue as T);
               } else if (T == double) {
                 var a = (v ?? "").replaceAll(',', "");
-                return widget.validator?.call(double.tryParse(a) as T);
+                double parsedValue = double.tryParse(
+                      a,
+                    ) ??
+                    0.0;
+                return widget.validator?.call(parsedValue as T);
               } else if (T == String) {
                 return widget.validator?.call(v as T);
               } else {
