@@ -458,6 +458,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                     : null,
                 hintText: widget.hint,
                 prefixIcon: widget.prefixIcon,
+                suffixIconColor: widget.colorSuffixIcon ??
+                    Theme.of(context).colorScheme.primary.withOpacity(0.6),
                 suffixIcon: widget.isPassword
                     ? IconButton(
                         icon: Icon(
@@ -470,7 +472,6 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                             vm.isObscureText = !vm.isObscureText;
                           });
                         },
-                        color: widget.colorSuffixIcon,
                       )
                     : widget.suffixIcon ??
                         (T == TimeOfDay
@@ -495,7 +496,6 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                   }
                                 },
                                 icon: const Icon(Icons.access_time),
-                                color: widget.colorSuffixIcon,
                               )
                             : (T == DateTime)
                                 ? IconButton(
@@ -562,7 +562,6 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                       }
                                     },
                                     icon: const Icon(Icons.calendar_today),
-                                    color: widget.colorSuffixIcon,
                                   )
                                 : T == DateTimeRange
                                     ? IconButton(
@@ -591,13 +590,11 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                           }
                                         },
                                         icon: const Icon(Icons.date_range),
-                                        color: widget.colorSuffixIcon,
                                       )
                                     : IconButton(
                                         icon: const Icon(
                                           Icons.cancel,
                                         ),
-                                        color: widget.colorSuffixIcon,
                                         onPressed: () {
                                           if (T == int) {
                                             model.text = "0";
