@@ -17,6 +17,7 @@ class InputComponent<T> extends StatefulWidget {
   final String hint;
   final String errorText;
   final Widget? suffixIcon;
+  final bool isSuffixIcon;
   final InputDecoration? nputDecoration;
   final Widget? prefixIcon;
   final PositionLabel positionLabel;
@@ -46,6 +47,7 @@ class InputComponent<T> extends StatefulWidget {
     this.isReadOnly = false,
     this.isRequired = false,
     this.isPassword = false,
+    this.isSuffixIcon = false,
     this.hint = '',
     this.errorText = '',
     this.suffixIcon,
@@ -473,141 +475,153 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                           });
                         },
                       )
-                    : widget.suffixIcon ??
-                        (T == TimeOfDay
-                            ? IconButton(
-                                onPressed: () async {
-                                  TimeOfDay? date = await showTimePicker(
-                                      context: context,
-                                      initialTime: widget.value == null
-                                          ? TimeOfDay.now()
-                                          : widget.value as TimeOfDay,
-                                      builder: (context, childWidget) {
-                                        return MediaQuery(
-                                          data: MediaQuery.of(context).copyWith(
-                                              alwaysUse24HourFormat:
-                                                  widget.alwaysUse24HourFormat),
-                                          child: childWidget!,
-                                        );
-                                      });
-                                  if (date != null) {
-                                    model.text = "${date.hour}:${date.minute}";
-                                    widget.onChanged(date as T);
-                                  }
-                                },
-                                icon: const Icon(Icons.access_time),
-                              )
-                            : (T == DateTime)
+                    : !widget.isSuffixIcon
+                        ? null
+                        : widget.suffixIcon ??
+                            (T == TimeOfDay
                                 ? IconButton(
                                     onPressed: () async {
-                                      DateTime? lastDate = widget.lastDate ??
-                                          DateTime.now()
-                                              .add(const Duration(days: 365));
-                                      DateTime? initialDate =
-                                          widget.value as DateTime?;
-                                      final date = await showDatePicker(
-                                        context: context,
-                                        initialDatePickerMode:
-                                            widget.datePickerMode,
-                                        initialDate:
-                                            initialDate.isAfter(lastDate)
-                                                ? null
-                                                : initialDate,
-                                        firstDate: widget.firstDate ??
-                                            DateTime.now().subtract(
-                                                const Duration(days: 365)),
-                                        lastDate: lastDate,
-                                      );
-                                      if (date != null) {
-                                        if (widget.isIncludeTime) {
-                                          TimeOfDay timeOfDays =
-                                              TimeOfDay.fromDateTime(date);
-                                          await Future.delayed(Duration.zero);
-                                          if (!mounted) return;
-                                          TimeOfDay? timeOfDay =
-                                              await showTimePicker(
-                                                  context: context,
-                                                  initialTime: timeOfDays,
-                                                  builder:
-                                                      (context, childWidget) {
-                                                    return MediaQuery(
-                                                      data: MediaQuery.of(
-                                                              context)
-                                                          .copyWith(
-                                                              alwaysUse24HourFormat:
-                                                                  widget
-                                                                      .alwaysUse24HourFormat),
-                                                      child: childWidget!,
-                                                    );
-                                                  });
-                                          if (timeOfDay != null) {
-                                            DateTime selectedDate = DateTime(
-                                              date.year,
-                                              date.month,
-                                              date.day,
-                                              timeOfDay.hour,
-                                              timeOfDay.minute,
+                                      TimeOfDay? date = await showTimePicker(
+                                          context: context,
+                                          initialTime: widget.value == null
+                                              ? TimeOfDay.now()
+                                              : widget.value as TimeOfDay,
+                                          builder: (context, childWidget) {
+                                            return MediaQuery(
+                                              data: MediaQuery.of(context).copyWith(
+                                                  alwaysUse24HourFormat: widget
+                                                      .alwaysUse24HourFormat),
+                                              child: childWidget!,
                                             );
-                                            model.text = selectedDate.toStrings(
-                                                locale: widget.locale,
-                                                format: Formats.dateTime);
-                                            widget.onChanged(selectedDate as T);
-                                          }
-                                        } else {
-                                          model.text = date.toStrings(
-                                            locale: widget.locale,
-                                          );
-                                          widget.onChanged(date as T);
-                                        }
+                                          });
+                                      if (date != null) {
+                                        model.text =
+                                            "${date.hour}:${date.minute}";
+                                        widget.onChanged(date as T);
                                       }
                                     },
-                                    icon: const Icon(Icons.calendar_today),
+                                    icon: const Icon(Icons.access_time),
                                   )
-                                : T == DateTimeRange
+                                : (T == DateTime)
                                     ? IconButton(
                                         onPressed: () async {
-                                          final date =
-                                              await showDateRangePicker(
+                                          DateTime? lastDate = widget
+                                                  .lastDate ??
+                                              DateTime.now().add(
+                                                  const Duration(days: 365));
+                                          DateTime? initialDate =
+                                              widget.value as DateTime?;
+                                          final date = await showDatePicker(
                                             context: context,
-                                            currentDate: widget.value == null
-                                                ? DateTime.now()
-                                                : widget.value as DateTime,
+                                            initialDatePickerMode:
+                                                widget.datePickerMode,
+                                            initialDate:
+                                                initialDate.isAfter(lastDate)
+                                                    ? null
+                                                    : initialDate,
                                             firstDate: widget.firstDate ??
                                                 DateTime.now().subtract(
                                                     const Duration(days: 365)),
-                                            lastDate: widget.lastDate ??
-                                                DateTime.now().add(
-                                                    const Duration(days: 365)),
+                                            lastDate: lastDate,
                                           );
                                           if (date != null) {
-                                            model.text =
-                                                "${date.start.toStrings(
-                                              locale: widget.locale,
-                                            )} - ${date.end.toStrings(
-                                              locale: widget.locale,
-                                            )}";
-                                            widget.onChanged(date as T);
+                                            if (widget.isIncludeTime) {
+                                              TimeOfDay timeOfDays =
+                                                  TimeOfDay.fromDateTime(date);
+                                              await Future.delayed(
+                                                  Duration.zero);
+                                              if (!mounted) return;
+                                              TimeOfDay? timeOfDay =
+                                                  await showTimePicker(
+                                                      context: context,
+                                                      initialTime: timeOfDays,
+                                                      builder: (context,
+                                                          childWidget) {
+                                                        return MediaQuery(
+                                                          data: MediaQuery.of(
+                                                                  context)
+                                                              .copyWith(
+                                                                  alwaysUse24HourFormat:
+                                                                      widget
+                                                                          .alwaysUse24HourFormat),
+                                                          child: childWidget!,
+                                                        );
+                                                      });
+                                              if (timeOfDay != null) {
+                                                DateTime selectedDate =
+                                                    DateTime(
+                                                  date.year,
+                                                  date.month,
+                                                  date.day,
+                                                  timeOfDay.hour,
+                                                  timeOfDay.minute,
+                                                );
+                                                model.text =
+                                                    selectedDate.toStrings(
+                                                        locale: widget.locale,
+                                                        format:
+                                                            Formats.dateTime);
+                                                widget.onChanged(
+                                                    selectedDate as T);
+                                              }
+                                            } else {
+                                              model.text = date.toStrings(
+                                                locale: widget.locale,
+                                              );
+                                              widget.onChanged(date as T);
+                                            }
                                           }
                                         },
-                                        icon: const Icon(Icons.date_range),
+                                        icon: const Icon(Icons.calendar_today),
                                       )
-                                    : IconButton(
-                                        icon: const Icon(
-                                          Icons.cancel,
-                                        ),
-                                        onPressed: () {
-                                          if (T == int) {
-                                            model.text = "0";
-                                            widget.onChanged(0 as T);
-                                          } else if (T == double) {
-                                            model.text = "0.0";
-                                            widget.onChanged(0.0 as T);
-                                          } else if (T == String) {
-                                            model.text = "";
-                                            widget.onChanged("" as T);
-                                          }
-                                        },
-                                      )),
+                                    : T == DateTimeRange
+                                        ? IconButton(
+                                            onPressed: () async {
+                                              final date =
+                                                  await showDateRangePicker(
+                                                context: context,
+                                                currentDate: widget.value ==
+                                                        null
+                                                    ? DateTime.now()
+                                                    : widget.value as DateTime,
+                                                firstDate: widget.firstDate ??
+                                                    DateTime.now().subtract(
+                                                        const Duration(
+                                                            days: 365)),
+                                                lastDate: widget.lastDate ??
+                                                    DateTime.now().add(
+                                                        const Duration(
+                                                            days: 365)),
+                                              );
+                                              if (date != null) {
+                                                model.text =
+                                                    "${date.start.toStrings(
+                                                  locale: widget.locale,
+                                                )} - ${date.end.toStrings(
+                                                  locale: widget.locale,
+                                                )}";
+                                                widget.onChanged(date as T);
+                                              }
+                                            },
+                                            icon: const Icon(Icons.date_range),
+                                          )
+                                        : IconButton(
+                                            icon: const Icon(
+                                              Icons.cancel,
+                                            ),
+                                            onPressed: () {
+                                              if (T == int) {
+                                                model.text = "0";
+                                                widget.onChanged(0 as T);
+                                              } else if (T == double) {
+                                                model.text = "0.0";
+                                                widget.onChanged(0.0 as T);
+                                              } else if (T == String) {
+                                                model.text = "";
+                                                widget.onChanged("" as T);
+                                              }
+                                            },
+                                          )),
                 focusedErrorBorder: widget.borderRadius == null
                     ? null
                     : OutlineInputBorder(
