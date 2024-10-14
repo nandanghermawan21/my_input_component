@@ -36,6 +36,7 @@ class InputComponent<T> extends StatefulWidget {
   final bool isIncludeTime;
   final DatePickerMode datePickerMode;
   final bool allowNegative;
+  final TextStyle? labelStyle;
 
   const InputComponent({
     super.key,
@@ -69,6 +70,7 @@ class InputComponent<T> extends StatefulWidget {
     this.defaultErrorText,
     this.isIncludeTime = false,
     this.datePickerMode = DatePickerMode.day,
+    this.labelStyle,
   });
 
   @override
@@ -153,10 +155,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                         child: Text(
                           widget.label,
                           textAlign: TextAlign.left,
-                          style:
-                              Theme.of(context).textTheme.titleMedium!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: widget.labelStyle ??
+                              Theme.of(context).textTheme.titleMedium!,
                         ),
                       ),
                       input(vm),
@@ -173,12 +173,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                             child: Text(
                               widget.label,
                               textAlign: TextAlign.left,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium!
-                                  .copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              style: widget.labelStyle ??
+                                  Theme.of(context).textTheme.titleMedium!,
                             ),
                           ),
                         ],
@@ -198,12 +194,10 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                     child: Text(
                                       widget.label,
                                       textAlign: TextAlign.left,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium!
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                      style: widget.labelStyle ??
+                                          Theme.of(context)
+                                              .textTheme
+                                              .titleMedium!,
                                     ),
                                   ),
                                   Expanded(child: input(vm)),
@@ -227,12 +221,10 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                         child: Text(
                                           widget.label,
                                           textAlign: TextAlign.right,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium!
-                                              .copyWith(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                          style: widget.labelStyle ??
+                                              Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium!,
                                         ),
                                       ),
                                     ],
