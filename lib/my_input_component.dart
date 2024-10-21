@@ -332,7 +332,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
             }
           : widget.isRequired
               ? (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.trim().isEmpty) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       vm.isError = true;
                     });
