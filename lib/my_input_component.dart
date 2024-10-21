@@ -304,7 +304,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 0.0;
             widget.onChanged(parsedValue as T);
           } else if (T == String) {
-            widget.onChanged(value as T);
+            widget.onChanged(value.trim() as T);
           }
         });
       },
@@ -696,7 +696,7 @@ class Notifier<T> extends ChangeNotifier {
 
   TextEditingController controller = TextEditingController();
   set text(String value) {
-    controller.text = value;
+    controller.text = value.trim();
     commit();
   }
 }
