@@ -34,6 +34,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  int pin1 = 0;
+  int pin2 = 0;
+  int pin3 = 0;
+  int pin4 = 0;
+  FocusNode focusNode1 = FocusNode();
+  FocusNode focusNode2 = FocusNode();
+  FocusNode focusNode3 = FocusNode();
+  FocusNode focusNode4 = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -50,79 +58,159 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                InputComponent<String>(
-                  onChanged: (v) {
-                    //do onchange
-                  },
-                  positionLabel: PositionLabel.top,
-                  label: "Input Text",
-                  hint: "Input Text",
-                  lastDate: DateTime.now(),
-                  isRequired: true,
-                  defaultErrorText: "Please fill",
-                ),
-                InputComponent<DateTime>(
-                  onChanged: (v) {
-                    //do onchange
-                  },
-                  positionLabel: PositionLabel.top,
-                  label: "Input Date",
-                  hint: "Input Date",
-                  lastDate: DateTime.now(),
-                  isRequired: true,
-                  defaultErrorText: "Please fill",
-                ),
-                InputComponent<int>(
-                  onChanged: (v) {
-                    //do onchange
-                  },
-                  positionLabel: PositionLabel.top,
-                  label: "Input Number",
-                  hint: "Input Number",
-                  lastDate: DateTime.now(),
-                  isRequired: true,
-                  defaultErrorText: "Please fill",
-                ),
-                InputComponent<int>(
-                  onChanged: (v) {
-                    //do onchange
-                  },
-                  positionLabel: PositionLabel.top,
-                  label: "Input Number",
-                  hint: "Input Number Min 10 max 100",
-                  lastDate: DateTime.now(),
-                  isRequired: true,
-                  defaultErrorText: "Please fill",
-                  validator: (v) {
-                    if (v < 10 || v > 100) {
-                      return "Value must be between 10 and 100";
-                    }
-                    return null;
-                  },
-                ),
-                InputComponent<double>(
-                  onChanged: (v) {
-                    //do onchange
-                  },
-                  positionLabel: PositionLabel.top,
-                  label: "Input decimal",
-                  hint: "Input decimal",
-                  lastDate: DateTime.now(),
-                  isRequired: true,
-                  defaultErrorText: "Please fill",
-                ),
-                InputComponent<double>(
-                  onChanged: (v) {
-                    //do onchange
-                  },
-                  positionLabel: PositionLabel.top,
-                  label: "Input decimal for currency",
-                  hint: "Input decimal for currency",
-                  lastDate: DateTime.now(),
-                  decimalDigits: 0,
-                  isRequired: true,
-                  defaultErrorText: "Please fill",
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: 50,
+                      child: Center(
+                        child: InputComponent<int>(
+                          onChanged: (v) {
+                            setState(() {
+                              pin1 = v;
+                            });
+                          },
+                          value: pin1,
+                          positionLabel: PositionLabel.none,
+                          label: "Input Number",
+                          isRequired: true,
+                          isPin: true,
+                          focusNode: focusNode1,
+                          nextFocusNode: focusNode2,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50,
+                      child: Center(
+                        child: InputComponent<int>(
+                          onChanged: (v) {
+                            setState(() {
+                              pin2 = v;
+                            });
+                          },
+                          value: pin2,
+                          positionLabel: PositionLabel.none,
+                          label: "Input Number",
+                          isRequired: true,
+                          isPin: true,
+                          focusNode: focusNode2,
+                          nextFocusNode: focusNode3,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50,
+                      child: Center(
+                        child: InputComponent<int>(
+                          onChanged: (v) {
+                            setState(() {
+                              pin3 = v;
+                            });
+                          },
+                          value: pin3,
+                          positionLabel: PositionLabel.none,
+                          label: "Input Number",
+                          isRequired: true,
+                          isPin: true,
+                          focusNode: focusNode3,
+                          nextFocusNode: focusNode4,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50,
+                      child: Center(
+                        child: InputComponent<int>(
+                          onChanged: (v) {
+                            setState(() {
+                              pin4 = v;
+                            });
+                          },
+                          value: pin4,
+                          positionLabel: PositionLabel.none,
+                          label: "Input Number",
+                          isRequired: true,
+                          isPin: true,
+                          focusNode: focusNode4,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                // InputComponent<String>(
+                //   onChanged: (v) {
+                //     //do onchange
+                //   },
+                //   positionLabel: PositionLabel.top,
+                //   label: "Input Text",
+                //   hint: "Input Text",
+                //   lastDate: DateTime.now(),
+                //   isRequired: true,
+                //   defaultErrorText: "Please fill",
+                // ),
+                // InputComponent<DateTime>(
+                //   onChanged: (v) {
+                //     //do onchange
+                //   },
+                //   positionLabel: PositionLabel.top,
+                //   label: "Input Date",
+                //   hint: "Input Date",
+                //   lastDate: DateTime.now(),
+                //   isRequired: true,
+                //   defaultErrorText: "Please fill",
+                // ),
+                // InputComponent<int>(
+                //   onChanged: (v) {
+                //     //do onchange
+                //   },
+                //   positionLabel: PositionLabel.top,
+                //   label: "Input Number",
+                //   hint: "Input Number",
+                //   lastDate: DateTime.now(),
+                //   isRequired: true,
+                //   defaultErrorText: "Please fill",
+                // ),
+                // InputComponent<int>(
+                //   onChanged: (v) {
+                //     //do onchange
+                //   },
+                //   positionLabel: PositionLabel.top,
+                //   label: "Input Number",
+                //   hint: "Input Number Min 10 max 100",
+                //   lastDate: DateTime.now(),
+                //   isRequired: true,
+                //   defaultErrorText: "Please fill",
+                //   validator: (v) {
+                //     if (v < 10 || v > 100) {
+                //       return "Value must be between 10 and 100";
+                //     }
+                //     return null;
+                //   },
+                // ),
+                // InputComponent<double>(
+                //   onChanged: (v) {
+                //     //do onchange
+                //   },
+                //   positionLabel: PositionLabel.top,
+                //   label: "Input decimal",
+                //   hint: "Input decimal",
+                //   lastDate: DateTime.now(),
+                //   isRequired: true,
+                //   defaultErrorText: "Please fill",
+                // ),
+                // InputComponent<double>(
+                //   onChanged: (v) {
+                //     //do onchange
+                //   },
+                //   positionLabel: PositionLabel.top,
+                //   label: "Input decimal for currency",
+                //   hint: "Input decimal for currency",
+                //   lastDate: DateTime.now(),
+                //   decimalDigits: 0,
+                //   isRequired: true,
+                //   defaultErrorText: "Please fill",
+                // ),
               ],
             ),
           ),
