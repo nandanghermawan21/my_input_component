@@ -18,7 +18,7 @@ class InputComponent<T> extends StatefulWidget {
   final String errorText;
   final Widget? suffixIcon;
   final bool isSuffixIcon;
-  final InputDecoration? nputDecoration;
+  final InputDecoration? inputDecoration;
   final Widget? prefixIcon;
   final PositionLabel positionLabel;
   final StringType stringType;
@@ -37,6 +37,9 @@ class InputComponent<T> extends StatefulWidget {
   final DatePickerMode datePickerMode;
   final bool allowNegative;
   final TextStyle? labelStyle;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
+  final bool isPin;
 
   const InputComponent({
     super.key,
@@ -52,7 +55,7 @@ class InputComponent<T> extends StatefulWidget {
     this.hint = '',
     this.errorText = '',
     this.suffixIcon,
-    this.nputDecoration,
+    this.inputDecoration,
     this.prefixIcon,
     this.positionLabel = PositionLabel.top,
     this.stringType = StringType.text,
@@ -71,7 +74,11 @@ class InputComponent<T> extends StatefulWidget {
     this.isIncludeTime = false,
     this.datePickerMode = DatePickerMode.day,
     this.labelStyle,
-  });
+    this.focusNode,
+    this.nextFocusNode,
+    this.isPin = false,
+  }) : assert(!isPin || focusNode != null,
+            'focusNode, nextFocusNode must not be null when isPin is true');
 
   @override
   InputComponentState<T> createState() => InputComponentState<T>();
@@ -244,6 +251,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
 
   Widget input(Notifier vm) {
     TextFormField input = TextFormField(
+      focusNode: widget.focusNode,
       autofocus: true,
       controller: vm.controller,
       readOnly: widget.isReadOnly,
@@ -292,6 +300,12 @@ class InputComponentState<T> extends State<InputComponent<T>> {
           : 1,
       onChanged: (value) {
         bouncer.run(() {
+          if (widget.isPin &&
+              value.length == 1 &&
+              widget.nextFocusNode != null) {
+            widget.focusNode?.unfocus();
+            FocusScope.of(context).requestFocus(widget.nextFocusNode);
+          }
           if (T == int) {
             var a = value.replaceAll(',', "");
             int parsedValue = int.tryParse(a) ?? 0;
@@ -435,7 +449,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
               }
             }
           },
-      decoration: widget.nputDecoration ??
+      decoration: widget.inputDecoration ??
           (const InputDecoration())
               .applyDefaults(Theme.of(context).inputDecorationTheme)
               .copyWith(
@@ -453,7 +467,10 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 hintText: widget.hint,
                 prefixIcon: widget.prefixIcon,
                 suffixIconColor: widget.colorSuffixIcon ??
-                    Theme.of(context).colorScheme.primary.withOpacity(0.6),
+                    Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.6),
                 suffixIcon: widget.isPassword
                     ? IconButton(
                         icon: Icon(
