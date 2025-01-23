@@ -301,7 +301,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
       onChanged: (value) {
         bouncer.run(() {
           if (widget.isPin &&
-              value.length == 1 &&
+              value.isNotEmpty &&
               widget.nextFocusNode != null) {
             widget.focusNode?.unfocus();
             FocusScope.of(context).requestFocus(widget.nextFocusNode);
