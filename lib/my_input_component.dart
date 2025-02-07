@@ -434,7 +434,7 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 initialDateRange: widget.value == null
                     ? DateTimeRange(
                         start: DateTime.now(),
-                        end: DateTime.now().add(const Duration(days: 1)),
+                        end: DateTime.now(),
                       )
                     : widget.value as DateTimeRange,
                 currentDate: DateTime.now(),
@@ -593,17 +593,15 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                               final date =
                                                   await showDateRangePicker(
                                                 context: context,
-                                                initialDateRange: widget
-                                                            .value ==
-                                                        null
-                                                    ? DateTimeRange(
-                                                        start: DateTime.now(),
-                                                        end: DateTime.now().add(
-                                                            const Duration(
-                                                                days: 1)),
-                                                      )
-                                                    : widget.value
-                                                        as DateTimeRange,
+                                                initialDateRange:
+                                                    widget.value == null
+                                                        ? DateTimeRange(
+                                                            start:
+                                                                DateTime.now(),
+                                                            end: DateTime.now(),
+                                                          )
+                                                        : widget.value
+                                                            as DateTimeRange,
                                                 currentDate: DateTime.now(),
                                                 firstDate: widget.firstDate ??
                                                     DateTime.now().subtract(
