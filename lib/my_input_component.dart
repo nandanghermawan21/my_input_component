@@ -40,10 +40,16 @@ class InputComponent<T> extends StatefulWidget {
   final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
   final bool isPin;
+  final String saveTaxt;
+  final String cancelText;
+  final String confirmText;
 
   const InputComponent({
     super.key,
     this.locale = "id-ID",
+    this.cancelText = "Cancel",
+    this.saveTaxt = "Save",
+    this.confirmText = "Confirm",
     required this.label,
     this.value,
     required this.onChanged,
@@ -370,6 +376,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                   initialTime: widget.value == null
                       ? TimeOfDay.now()
                       : widget.value as TimeOfDay,
+                  cancelText: widget.cancelText,
+                  confirmText: widget.confirmText,
                   builder: (context, childWidget) {
                     return MediaQuery(
                       data: MediaQuery.of(context).copyWith(
@@ -392,6 +400,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 firstDate: widget.firstDate ??
                     DateTime.now().subtract(const Duration(days: 365)),
                 lastDate: lastDate,
+                cancelText: widget.cancelText,
+                confirmText: widget.confirmText,
               );
               if (date != null) {
                 if (widget.isIncludeTime) {
@@ -401,6 +411,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                   TimeOfDay? timeOfDay = await showTimePicker(
                       context: context,
                       initialTime: timeOfDays,
+                      cancelText: widget.cancelText,
+                      confirmText: widget.confirmText,
                       builder: (context, childWidget) {
                         return MediaQuery(
                           data: MediaQuery.of(context).copyWith(
@@ -431,6 +443,9 @@ class InputComponentState<T> extends State<InputComponent<T>> {
             } else if (T == DateTimeRange) {
               final date = await showDateRangePicker(
                 context: context,
+                cancelText: widget.cancelText,
+                confirmText: widget.saveTaxt,
+                saveText: widget.saveTaxt,
                 initialDateRange: widget.value == null
                     ? DateTimeRange(
                         start: DateTime.now(),
@@ -441,7 +456,9 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                 firstDate: widget.firstDate ??
                     DateTime.now().subtract(const Duration(days: 365)),
                 lastDate: widget.lastDate ??
-                    DateTime.now().add(const Duration(days: 365)),
+                    DateTime.now().add(
+                      const Duration(days: 365),
+                    ),
               );
               if (date != null) {
                 model.text = "${date.start.toStrings(
@@ -496,6 +513,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                     onPressed: () async {
                                       TimeOfDay? date = await showTimePicker(
                                           context: context,
+                                          cancelText: widget.cancelText,
+                                          confirmText: widget.saveTaxt,
                                           initialTime: widget.value == null
                                               ? TimeOfDay.now()
                                               : widget.value as TimeOfDay,
@@ -526,6 +545,8 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                               widget.value as DateTime?;
                                           final date = await showDatePicker(
                                             context: context,
+                                            cancelText: widget.cancelText,
+                                            confirmText: widget.saveTaxt,
                                             initialDatePickerMode:
                                                 widget.datePickerMode,
                                             initialDate:
@@ -548,6 +569,10 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                                   await showTimePicker(
                                                       context: context,
                                                       initialTime: timeOfDays,
+                                                      cancelText:
+                                                          widget.cancelText,
+                                                      confirmText:
+                                                          widget.saveTaxt,
                                                       builder: (context,
                                                           childWidget) {
                                                         return MediaQuery(
@@ -593,6 +618,9 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                               final date =
                                                   await showDateRangePicker(
                                                 context: context,
+                                                cancelText: widget.cancelText,
+                                                confirmText: widget.saveTaxt,
+                                                saveText: widget.saveTaxt,
                                                 initialDateRange:
                                                     widget.value == null
                                                         ? DateTimeRange(
