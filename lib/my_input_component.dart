@@ -431,9 +431,13 @@ class InputComponentState<T> extends State<InputComponent<T>> {
             } else if (T == DateTimeRange) {
               final date = await showDateRangePicker(
                 context: context,
-                currentDate: widget.value == null
-                    ? DateTime.now()
-                    : widget.value as DateTime,
+                initialDateRange: widget.value == null
+                    ? DateTimeRange(
+                        start: DateTime.now(),
+                        end: DateTime.now().add(const Duration(days: 1)),
+                      )
+                    : widget.value as DateTimeRange,
+                currentDate: DateTime.now(),
                 firstDate: widget.firstDate ??
                     DateTime.now().subtract(const Duration(days: 365)),
                 lastDate: widget.lastDate ??
@@ -589,10 +593,18 @@ class InputComponentState<T> extends State<InputComponent<T>> {
                                               final date =
                                                   await showDateRangePicker(
                                                 context: context,
-                                                currentDate: widget.value ==
+                                                initialDateRange: widget
+                                                            .value ==
                                                         null
-                                                    ? DateTime.now()
-                                                    : widget.value as DateTime,
+                                                    ? DateTimeRange(
+                                                        start: DateTime.now(),
+                                                        end: DateTime.now().add(
+                                                            const Duration(
+                                                                days: 1)),
+                                                      )
+                                                    : widget.value
+                                                        as DateTimeRange,
+                                                currentDate: DateTime.now(),
                                                 firstDate: widget.firstDate ??
                                                     DateTime.now().subtract(
                                                         const Duration(
